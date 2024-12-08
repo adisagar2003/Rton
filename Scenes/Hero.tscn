@@ -1,0 +1,276 @@
+[gd_scene load_steps=23 format=3 uid="uid://be6pj31ue5jaa"]
+
+[ext_resource type="Texture2D" uid="uid://b3ok43d1spuue" path="res://Assets/Hero/Smallsword attack.png" id="1_a5wob"]
+[ext_resource type="Texture2D" uid="uid://bxoqtq4lxjbfj" path="res://Assets/Hero/run.png" id="2_s0gsm"]
+
+[sub_resource type="GDScript" id="GDScript_kkry4"]
+resource_name = "Hero"
+script/source = "extends CharacterBody2D
+
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+
+enum States {IDLE,ATTACKING,RUNNING}
+var state = States.IDLE;
+@onready var collision_shape_2d: CollisionShape2D = $AnimSprite/HitBox/CollisionShape2D
+
+func _ready() -> void:
+	collision_shape_2d.disabled = true;
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\")
+	if direction:
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED);
+	
+	#Input Handling
+	InputHandler();
+	#State Handling
+	StateHandler();
+	#Animation Handle
+	AnimHandler();
+	
+	move_and_slide()
+	
+# Handle animations
+func AnimHandler():
+	if (state == States.IDLE):
+		$AnimSprite.play(\"Idle\");
+		pass
+	elif is_on_floor() and state == States.RUNNING:
+		$AnimSprite.play(\"Run\");
+	elif !is_on_floor():
+		$AnimSprite.play(\"Idle\");
+	elif (state == States.ATTACKING):
+		$AnimSprite.play(\"Attack1\");
+		#Hitbox
+		$AnimationPlayer.play(\"Anim1\");
+	else:
+		$AnimSprite.play(\"Idle\");
+		
+#Handle States
+func StateHandler():
+	if (velocity.x == 0 and is_on_floor() and state != States.ATTACKING):
+		state = States.IDLE;
+	elif (velocity.x != 0 and is_on_floor() and state != States.ATTACKING):
+		state = States.RUNNING;
+	if (state == States.ATTACKING):
+		pass
+	pass
+
+
+# Handle all misc inputs
+func InputHandler():
+	if (Input.is_action_just_pressed(\"Attack\") and state != States.ATTACKING):
+		state = States.ATTACKING;
+		HandleAttack();
+
+func _on_attack_cooldown_timeout() -> void:
+	state = States.IDLE
+	print(\"Attack done, now please get back normal\");
+	pass # Replace with function body.
+
+func HandleAttack():
+	#Start Attack timer to stop the state
+	$Attack/AttackCooldown.start();
+	
+	# Start Animation player for hitbox of sword
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v82ml"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 0, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gisgg"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 27, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cowyb"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 54, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4s0cw"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 81, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_po5pc"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 108, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rf5x"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 135, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fxyad"]
+atlas = ExtResource("1_a5wob")
+region = Rect2(0, 162, 63, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c7isv"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 0, 54, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gtdnq"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 54, 54, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7nm8q"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 0, 54, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_68r2j"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 27, 54, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ub781"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 54, 54, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvmnm"]
+atlas = ExtResource("2_s0gsm")
+region = Rect2(0, 81, 54, 27)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_74cr4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v82ml")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gisgg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cowyb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4s0cw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_po5pc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2rf5x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fxyad")
+}],
+"loop": true,
+"name": &"Attack1",
+"speed": 25.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c7isv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gtdnq")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7nm8q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_68r2j")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ub781")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvmnm")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 10.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w0282"]
+size = Vector2(15.4263, 5.60757)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hswgl"]
+radius = 5.0
+height = 20.0
+
+[sub_resource type="Animation" id="Animation_w06t5"]
+resource_name = "Anim1"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimSprite/HitBox/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2081, 0.333333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_72jac"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimSprite/HitBox/CollisionShape2D:disabled")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_j3efg"]
+_data = {
+"Anim1": SubResource("Animation_w06t5"),
+"RESET": SubResource("Animation_72jac")
+}
+
+[node name="Hero" type="CharacterBody2D"]
+script = SubResource("GDScript_kkry4")
+
+[node name="AnimSprite" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_74cr4")
+animation = &"Idle"
+autoplay = "Idle"
+frame_progress = 0.870334
+
+[node name="HitBox" type="Area2D" parent="AnimSprite"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AnimSprite/HitBox"]
+position = Vector2(13.9639, 4.56048)
+rotation = -0.395748
+shape = SubResource("RectangleShape2D_w0282")
+debug_color = Color(0.677504, 0.48854, 0.3613, 0.42)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_hswgl")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_j3efg")
+}
+
+[node name="Attack" type="Node" parent="."]
+
+[node name="AttackCooldown" type="Timer" parent="Attack"]
+wait_time = 0.25
+one_shot = true
+
+[connection signal="timeout" from="Attack/AttackCooldown" to="." method="_on_attack_cooldown_timeout"]
