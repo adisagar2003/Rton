@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://bg28kg4cxb1nb"]
+
+[ext_resource type="Texture2D" uid="uid://k8vo8ygog5hy" path="res://Assets/Dungeon Ruins Tileset/Box.png" id="1_xpbs4"]
+
+[sub_resource type="GDScript" id="GDScript_ebrka"]
+resource_name = "Destructible"
+script/source = "extends Node2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0fl4n"]
+atlas = ExtResource("1_xpbs4")
+region = Rect2(0, 0, 53, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_30uce"]
+atlas = ExtResource("1_xpbs4")
+region = Rect2(0, 31, 53, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vihqk"]
+atlas = ExtResource("1_xpbs4")
+region = Rect2(0, 62, 53, 31)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ewbew"]
+atlas = ExtResource("1_xpbs4")
+region = Rect2(0, 0, 53, 31)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g5gw7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0fl4n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_30uce")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vihqk")
+}],
+"loop": true,
+"name": &"Hurt",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ewbew")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7pihb"]
+size = Vector2(16, 13)
+
+[node name="Destructible" type="Node2D"]
+script = SubResource("GDScript_ebrka")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(2, -1)
+sprite_frames = SubResource("SpriteFrames_g5gw7")
+animation = &"Idle"
+
+[node name="HurtBox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+position = Vector2(-1, -7)
+shape = SubResource("RectangleShape2D_7pihb")

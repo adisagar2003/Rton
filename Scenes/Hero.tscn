@@ -8,7 +8,7 @@ resource_name = "Hero"
 script/source = "extends CharacterBody2D
 
 
-const SPEED = 300.0
+@export var SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
 enum States {IDLE,ATTACKING,RUNNING}
@@ -248,7 +248,7 @@ script = SubResource("GDScript_kkry4")
 sprite_frames = SubResource("SpriteFrames_74cr4")
 animation = &"Idle"
 autoplay = "Idle"
-frame_progress = 0.870334
+frame_progress = 0.685297
 
 [node name="HitBox" type="Area2D" parent="AnimSprite"]
 
@@ -272,5 +272,9 @@ libraries = {
 [node name="AttackCooldown" type="Timer" parent="Attack"]
 wait_time = 0.25
 one_shot = true
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(100, -54.08)
+zoom = Vector2(4, 4)
 
 [connection signal="timeout" from="Attack/AttackCooldown" to="." method="_on_attack_cooldown_timeout"]
