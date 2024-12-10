@@ -86,6 +86,14 @@ func HandleAttack():
 	$Attack/AttackCooldown.start();
 	
 	# Start Animation player for hitbox of sword
+
+
+func _on_hit_box_body_entered(body: Node2D) -> void:
+	print(body);
+	if (body.has_method(\"TakeDamage\")):
+		print(\"hitbox done\")
+		body.TakeDamage();
+	pass # Replace with function body.
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_v82ml"]
@@ -251,6 +259,8 @@ autoplay = "Idle"
 frame_progress = 0.685297
 
 [node name="HitBox" type="Area2D" parent="AnimSprite"]
+disable_mode = 2
+collision_layer = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AnimSprite/HitBox"]
 position = Vector2(13.9639, 4.56048)
@@ -277,4 +287,5 @@ one_shot = true
 offset = Vector2(100, -54.08)
 zoom = Vector2(4, 4)
 
+[connection signal="body_entered" from="AnimSprite/HitBox" to="." method="_on_hit_box_body_entered"]
 [connection signal="timeout" from="Attack/AttackCooldown" to="." method="_on_attack_cooldown_timeout"]

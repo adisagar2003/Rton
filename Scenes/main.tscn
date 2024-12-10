@@ -32,4 +32,4 @@ scale = Vector2(1.41312, 1.41312)
 SPEED = 100.0
 
 [node name="Destructible" parent="TileMapLayer" instance=ExtResource("3_ed76t")]
-position = Vector2(148, 624)
+position = Vector2(118, 613)
