@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://b71k70xhuyjal"
+path="res://.godot/imported/tense atmosphere 1.wav-7b9eecff0d7e2d28cfd121c2c3b2fc5d.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/atmosphere/tense atmosphere 1.wav"
+dest_files=["res://.godot/imported/tense atmosphere 1.wav-7b9eecff0d7e2d28cfd121c2c3b2fc5d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

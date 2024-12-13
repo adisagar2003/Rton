@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cabl3ga8rai68"
+path="res://.godot/imported/sing 2.wav-610040d61ed42a1367e22523c71b63fe.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/Extras/can use for music/sing 2.wav"
+dest_files=["res://.godot/imported/sing 2.wav-610040d61ed42a1367e22523c71b63fe.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

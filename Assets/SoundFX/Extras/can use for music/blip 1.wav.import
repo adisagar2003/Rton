@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://3tqdissxiv16"
+path="res://.godot/imported/blip 1.wav-2308f969a6c03ecf922ef01f26633b29.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/Extras/can use for music/blip 1.wav"
+dest_files=["res://.godot/imported/blip 1.wav-2308f969a6c03ecf922ef01f26633b29.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

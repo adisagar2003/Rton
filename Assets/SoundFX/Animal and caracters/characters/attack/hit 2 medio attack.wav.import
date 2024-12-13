@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://basiv1i7c8tph"
+path="res://.godot/imported/hit 2 medio attack.wav-6055cc1d7f3c009fc872b5495e5a75b4.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/Animal and caracters/characters/attack/hit 2 medio attack.wav"
+dest_files=["res://.godot/imported/hit 2 medio attack.wav-6055cc1d7f3c009fc872b5495e5a75b4.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

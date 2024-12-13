@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cmvaf8okfumy3"
+path="res://.godot/imported/computer(turn on).wav-be99f1d10c1701c695bbb18213ce7caf.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/Machines/computer(turn on).wav"
+dest_files=["res://.godot/imported/computer(turn on).wav-be99f1d10c1701c695bbb18213ce7caf.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c61a0v6whk7ne"
+path="res://.godot/imported/need edit 2.wav-9f04eeb59c08c81dabd3881e5f68db12.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/need edit 2.wav"
+dest_files=["res://.godot/imported/need edit 2.wav-9f04eeb59c08c81dabd3881e5f68db12.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

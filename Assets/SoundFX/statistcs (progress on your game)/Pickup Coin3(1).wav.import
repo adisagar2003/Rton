@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dtyx3c3sk3hqk"
+path="res://.godot/imported/Pickup Coin3(1).wav-b820c837e852ffd245adc6074e3e5d9e.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/statistcs (progress on your game)/Pickup Coin3(1).wav"
+dest_files=["res://.godot/imported/Pickup Coin3(1).wav-b820c837e852ffd245adc6074e3e5d9e.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

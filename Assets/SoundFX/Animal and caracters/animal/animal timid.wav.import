@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cj7vasnulhnx7"
+path="res://.godot/imported/animal timid.wav-b027f70cf79b57faac5ec0315e7de8d7.sample"
+
+[deps]
+
+source_file="res://Assets/SoundFX/Animal and caracters/animal/animal timid.wav"
+dest_files=["res://.godot/imported/animal timid.wav-b027f70cf79b57faac5ec0315e7de8d7.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
