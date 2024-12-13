@@ -1,13 +1,18 @@
-[gd_scene load_steps=23 format=3 uid="uid://be6pj31ue5jaa"]
+[gd_scene load_steps=26 format=3 uid="uid://be6pj31ue5jaa"]
 
 [ext_resource type="Texture2D" uid="uid://b3ok43d1spuue" path="res://Assets/Hero/Smallsword attack.png" id="1_a5wob"]
 [ext_resource type="Texture2D" uid="uid://bxoqtq4lxjbfj" path="res://Assets/Hero/run.png" id="2_s0gsm"]
+[ext_resource type="AudioStream" uid="uid://b7qs061iyfjo1" path="res://Assets/SoundFX/Animal and caracters/characters/actions and reactions interactions/walk/walk 3 slow.wav" id="3_duakt"]
+[ext_resource type="AudioStream" uid="uid://wdtn58sw4h4w" path="res://Assets/SoundFX/Animal and caracters/characters/actions and reactions interactions/jump.wav" id="4_bko8j"]
+[ext_resource type="AudioStream" uid="uid://cmgi474prgv5q" path="res://Assets/SoundFX/Animal and caracters/characters/actions and reactions interactions/attack/hit 3 strong attack.wav" id="5_tfbui"]
 
 [sub_resource type="GDScript" id="GDScript_kkry4"]
 resource_name = "Hero"
 script/source = "extends CharacterBody2D
 
-
+@onready var playerWalkingAudioStream = $AudioStreamPlayer_Walking;
+@onready var playerJumpingAudioStream = $AudioStreamPlayer_Jumping;
+@onready var playerAttackAudioStream = $AudioStreamPlayer_Attack;
 @export var SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
@@ -26,14 +31,20 @@ func _physics_process(delta: float) -> void:
 	# Handle jump.
 	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
+		# Play jump sound
+		playerJumpingAudioStream.play();
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
 	var direction := Input.get_axis(\"ui_left\", \"ui_right\")
 	if direction:
 		velocity.x = direction * SPEED
+		if is_on_floor():
+			if !playerWalkingAudioStream.playing:
+				playerWalkingAudioStream.play();
+				
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED);
-	
+		
 	#Input Handling
 	InputHandler();
 	#State Handling
@@ -84,7 +95,9 @@ func _on_attack_cooldown_timeout() -> void:
 func HandleAttack():
 	#Start Attack timer to stop the state
 	$Attack/AttackCooldown.start();
-	
+	#Start Attack sound
+	if !playerAttackAudioStream.playing:
+		playerAttackAudioStream.play();
 	# Start Animation player for hitbox of sword
 
 
@@ -285,6 +298,18 @@ one_shot = true
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(100, -54.08)
 zoom = Vector2(4, 4)
+
+[node name="AudioStreamPlayer_Walking" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_duakt")
+bus = &"SFX"
+
+[node name="AudioStreamPlayer_Jumping" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_bko8j")
+bus = &"SFX"
+
+[node name="AudioStreamPlayer_Attack" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_tfbui")
+bus = &"SFX"
 
 [connection signal="body_entered" from="AnimSprite/HitBox" to="." method="_on_hit_box_body_entered"]
 [connection signal="timeout" from="Attack/AttackCooldown" to="." method="_on_attack_cooldown_timeout"]
