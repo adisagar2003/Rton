@@ -1,0 +1,214 @@
+[gd_scene load_steps=14 format=3 uid="uid://ci82aii7lfwk3"]
+
+[ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="1_md4u1"]
+
+[sub_resource type="GDScript" id="GDScript_3fylj"]
+script/source = "extends CharacterBody2D
+
+
+const SPEED = 300.0
+const JUMP_VELOCITY = -400.0
+
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	#if not is_on_floor():
+		#velocity += get_gravity() * delta
+
+	# Handle jump.
+	#if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		#velocity.y = JUMP_VELOCITY
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
+	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
+	if verticalDirection:
+		velocity.y = verticalDirection * SPEED;
+	if direction:
+		print(\"Movement should happen :/\")
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+
+	move_and_slide()
+"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vl742"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pl7cx"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_udhne"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6bbpv"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0yig4"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p04th"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(16, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3yj6o"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(0, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jqf7c"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(8, 16, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sofad"]
+atlas = ExtResource("1_md4u1")
+region = Rect2(16, 16, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jv7t3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pl7cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_udhne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6bbpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0yig4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}],
+"loop": true,
+"name": &"Run",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vl742")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p04th")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3yj6o")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jqf7c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sofad")
+}],
+"loop": true,
+"name": &"attack",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v0pb8"]
+radius = 4.0
+height = 10.0
+
+[node name="Rton" type="CharacterBody2D"]
+script = SubResource("GDScript_3fylj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_jv7t3")
+animation = &"Idle"
+metadata/_aseprite_wizard_interface_config_ = {
+"layer_section": true,
+"pending_changes": {}
+}
+metadata/_aseprite_wizard_config_ = {
+"layers": [],
+"o_ex_p": "",
+"o_folder": "",
+"o_name": "",
+"only_visible": false,
+"should_round_fps": true,
+"slice": "",
+"source": "res://Assets/Aesprite/main-char.aseprite"
+}
+metadata/_aseprite_wizard_source_file_hash_ = "c1d1f22dfdf3413cdbe2b39fc6a64906"
+
+[node name="Camera2D" type="Camera2D" parent="AnimatedSprite2D"]
+position = Vector2(-118, -70)
+zoom = Vector2(4, 4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(118, 69)
+shape = SubResource("CapsuleShape2D_v0pb8")
