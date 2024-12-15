@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://ci82aii7lfwk3"]
+[gd_scene load_steps=16 format=3 uid="uid://ci82aii7lfwk3"]
 
 [ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="1_md4u1"]
 
@@ -16,41 +16,27 @@ func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	#if not is_on_floor():
 		#velocity += get_gravity() * delta
+	HandleInputMovement();
 	HandleSpriteFlip();
 	AnimHandle();
+	HandleAttack();
+	
 	# Handle jump.
 	#if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
-		#velocity.y = JUMP_VELOCITY
-
+	#velocity.y = JUMP_VELOCITY
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
-	
-	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
-	if verticalDirection:
-		state = States.Running;
-		velocity.y = verticalDirection * VERTICAL_SPEED;
-	else:
-		velocity.y = move_toward(velocity.y, 0, VERTICAL_SPEED);
-		if (state !=States.Attacking):
-			state = States.Idle;
-	if direction:
-		state = States.Running;
-		print(\"Movement should happen :/\");
-		velocity.x = direction * SPEED
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED);
-		if (state !=States.Attacking):
-			state = States.Idle;
-
 	move_and_slide()
-
+	# STRANGE EXCEPTION
+	if (velocity.y != 0):
+		state =States.Running;
+		
 func HandleSpriteFlip():
 	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 	if (direction < 0):
-		$AnimatedSprite2D.flip_h = true;
-	if (direction > 0):
 		$AnimatedSprite2D.flip_h = false;
+	if (direction > 0):
+		$AnimatedSprite2D.flip_h = true;
 	if (direction == 0):
 		$AnimatedSprite2D.flip_h = $AnimatedSprite2D.flip_h;
 	
@@ -61,7 +47,38 @@ func AnimHandle():
 		$AnimatedSprite2D.play(\"Run\");
 	if (state == States.Attacking):
 		$AnimatedSprite2D.play(\"attack\");
+
+func HandleAttack():
+	if Input.is_action_just_pressed(\"Attack\"):
+		state = States.Attacking;
+		$AttackCooldown.start();
+		set_process_input(false);
+		
+func StopAttack():
+	pass
+
+func HandleInputMovement():
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 	
+	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
+	if verticalDirection:
+		velocity.y = verticalDirection * VERTICAL_SPEED;
+		
+	else:
+		velocity.y = move_toward(velocity.y, 0, VERTICAL_SPEED);
+	if direction:
+		state = States.Running;
+
+		velocity.x = direction * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED);
+		if (state !=States.Attacking):
+			state = States.Idle;
+
+func _on_timer_timeout() -> void:
+	print(\"no input found\");
+	state = States.Idle;
+	pass # Replace with function body.
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vl742"]
@@ -185,7 +202,7 @@ animations = [{
 }],
 "loop": true,
 "name": &"Run",
-"speed": 10.0
+"speed": 20.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -205,8 +222,28 @@ animations = [{
 }],
 "loop": true,
 "name": &"attack",
-"speed": 10.0
+"speed": 15.0
 }]
+
+[sub_resource type="Animation" id="Animation_0aact"]
+resource_name = "Attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:sprite_frames")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6swys"]
+_data = {
+"Attack": SubResource("Animation_0aact")
+}
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v0pb8"]
 radius = 4.0
@@ -218,7 +255,9 @@ script = SubResource("GDScript_3fylj")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_jv7t3")
-animation = &"Idle"
+animation = &"attack"
+frame = 3
+frame_progress = 0.563539
 metadata/_aseprite_wizard_interface_config_ = {
 "layer_section": true,
 "pending_changes": {}
@@ -235,5 +274,17 @@ metadata/_aseprite_wizard_config_ = {
 }
 metadata/_aseprite_wizard_source_file_hash_ = "c1d1f22dfdf3413cdbe2b39fc6a64906"
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="AnimatedSprite2D"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_6swys")
+}
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_v0pb8")
+
+[node name="AttackCooldown" type="Timer" parent="."]
+wait_time = 0.3
+one_shot = true
+
+[connection signal="timeout" from="AttackCooldown" to="." method="_on_timer_timeout"]
