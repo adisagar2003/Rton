@@ -1,17 +1,27 @@
-[gd_scene load_steps=16 format=3 uid="uid://ci82aii7lfwk3"]
+[gd_scene load_steps=17 format=3 uid="uid://ci82aii7lfwk3"]
 
 [ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="1_md4u1"]
+[ext_resource type="Script" path="res://Scenes/trail.gd" id="2_5xuv2"]
 
 [sub_resource type="GDScript" id="GDScript_3fylj"]
 script/source = "extends CharacterBody2D
 
 
-@export var SPEED = 300.0;
-@export var VERTICAL_SPEED = 100.0;
+@export var SPEED = 150.0;
+@export var VERTICAL_SPEED = 50.0;
 const JUMP_VELOCITY = -400.0
 
 enum States {Idle, Running, Attacking, Hurt};
+enum FacingDirection {Left, Right};
+var state_names = {
+	States.Idle: \"Idle\",
+	States.Running: \"Running\",
+	States.Attacking: \"Attacking\",
+	States.Hurt: \"Hurt\"
+}
+
 var state = States.Idle;
+var facingDirection = FacingDirection.Left;
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	#if not is_on_floor():
@@ -20,22 +30,21 @@ func _physics_process(delta: float) -> void:
 	HandleSpriteFlip();
 	AnimHandle();
 	HandleAttack();
-	
+	print(velocity.normalized().length());
 	# Handle jump.
 	#if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
 	#velocity.y = JUMP_VELOCITY
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
-	move_and_slide()
-	# STRANGE EXCEPTION
-	if (velocity.y != 0):
-		state =States.Running;
+	move_and_slide();
 		
 func HandleSpriteFlip():
 	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 	if (direction < 0):
+		facingDirection = FacingDirection.Left;
 		$AnimatedSprite2D.flip_h = false;
 	if (direction > 0):
+		facingDirection = FacingDirection.Right;
 		$AnimatedSprite2D.flip_h = true;
 	if (direction == 0):
 		$AnimatedSprite2D.flip_h = $AnimatedSprite2D.flip_h;
@@ -50,33 +59,49 @@ func AnimHandle():
 
 func HandleAttack():
 	if Input.is_action_just_pressed(\"Attack\"):
-		state = States.Attacking;
-		$AttackCooldown.start();
-		set_process_input(false);
+		if (state == States.Attacking):
+			pass
+		#Dash in specified direction
+		
+		else:
+			state = States.Attacking;
+			if (facingDirection == FacingDirection.Left):
+				velocity.x += SPEED*10* -1;
+				pass
+			if (facingDirection == FacingDirection.Right):
+				velocity.x += SPEED*10;
+				pass
+			$AttackCooldown.start();
+			set_process_input(false);
 		
 func StopAttack():
 	pass
 
 func HandleInputMovement():
-	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 	
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
 	if verticalDirection:
-		velocity.y = verticalDirection * VERTICAL_SPEED;
-		
+		velocity.y = verticalDirection;
 	else:
-		velocity.y = move_toward(velocity.y, 0, VERTICAL_SPEED);
+		velocity.y = move_toward(velocity.y, 0, SPEED);
 	if direction:
-		state = States.Running;
-
-		velocity.x = direction * SPEED
+		velocity.x = direction;
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED);
 		if (state !=States.Attacking):
 			state = States.Idle;
-
+			
+	# NORMALIZE VELOCITY
+	velocity = velocity.normalized() * SPEED;
+	#Handle states
+	if (velocity != Vector2.ZERO and state != States.Attacking):
+		state = States.Running;
+	
+	# handle when pressing both buttons, reduce the speed a lil.
+	
+		
 func _on_timer_timeout() -> void:
-	print(\"no input found\");
 	state = States.Idle;
 	pass # Replace with function body.
 "
@@ -280,11 +305,17 @@ libraries = {
 "": SubResource("AnimationLibrary_6swys")
 }
 
+[node name="Trail" type="Line2D" parent="AnimatedSprite2D"]
+top_level = true
+width = 6.0
+default_color = Color(0.896449, 0, 0.233837, 1)
+script = ExtResource("2_5xuv2")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_v0pb8")
 
 [node name="AttackCooldown" type="Timer" parent="."]
-wait_time = 0.3
+wait_time = 0.7
 one_shot = true
 
 [connection signal="timeout" from="AttackCooldown" to="." method="_on_timer_timeout"]
