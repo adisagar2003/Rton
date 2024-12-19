@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://ci82aii7lfwk3"]
+[gd_scene load_steps=17 format=3 uid="uid://ci82aii7lfwk3"]
 
 [ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="1_md4u1"]
 [ext_resource type="Script" path="res://Scenes/trail.gd" id="2_5xuv2"]
@@ -9,7 +9,6 @@ script/source = "extends CharacterBody2D
 
 @export var SPEED = 150.0;
 @export var VERTICAL_SPEED = 50.0;
-@export var DASH_INTENSITY = 1.0;
 const JUMP_VELOCITY = -400.0
 
 
@@ -20,7 +19,6 @@ var queue : Array
 enum States {Idle, Running, Attacking, Hurt};
 
 enum FacingDirection {Left, Right};
-
 
 var state_names = {
 	States.Idle: \"Idle\",
@@ -70,19 +68,16 @@ func HandleAttack():
 	if Input.is_action_just_pressed(\"Attack\"):
 		if (state == States.Attacking):
 			pass
-
+		#Dash in specified direction
+		
 		else:
-			
 			state = States.Attacking;
-				#Dash in specified direction
 			if (facingDirection == FacingDirection.Left):
-				velocity.x += SPEED* -1*DASH_INTENSITY;
+				velocity.x += SPEED*10* -1;
 				pass
 			if (facingDirection == FacingDirection.Right):
-				velocity.x += SPEED*1*DASH_INTENSITY;
+				velocity.x += SPEED*10;
 				pass
-			# Cheap workaround for disabling input
-			
 			$AttackCooldown.start();
 			set_process_input(false);
 		
@@ -90,32 +85,30 @@ func StopAttack():
 	pass
 
 func HandleInputMovement():
-	if (state != States.Attacking):
-		
-		var direction := Input.get_axis(\"ui_left\", \"ui_right\");
-		var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
-		if verticalDirection:
-			velocity.y = verticalDirection;
-		else:
-			velocity.y = move_toward(velocity.y, 0, SPEED);
-		if direction:
-			velocity.x = direction;
-		else:
-			velocity.x = move_toward(velocity.x, 0, SPEED);
-			if (state !=States.Attacking):
-				state = States.Idle;
-				
-		# NORMALIZE VELOCITY
-		velocity = velocity.normalized() * SPEED;
-		#Handle states
-		if (velocity != Vector2.ZERO and state != States.Attacking):
-			state = States.Running;
-		
-		# handle when pressing both buttons, reduce the speed a lil.
-		#var pos = animated_sprite_2d.global_position;
-		#add_point(pos);
+	
+	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
+	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
+	if verticalDirection:
+		velocity.y = verticalDirection;
+	else:
+		velocity.y = move_toward(velocity.y, 0, SPEED);
+	if direction:
+		velocity.x = direction;
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED);
+		if (state !=States.Attacking):
+			state = States.Idle;
+			
+	# NORMALIZE VELOCITY
+	velocity = velocity.normalized() * SPEED;
+	#Handle states
+	if (velocity != Vector2.ZERO and state != States.Attacking):
+		state = States.Running;
+	
+	# handle when pressing both buttons, reduce the speed a lil.
+	#var pos = animated_sprite_2d.global_position;
+	#add_point(pos);
 func _on_timer_timeout() -> void:
-	queue.clear()
 	state = States.Idle;
 	pass # Replace with function body.
 	
@@ -123,17 +116,18 @@ func _on_timer_timeout() -> void:
 func DashTrail():
 	# when attacking, show trail,
 	# should be thin at end
-	# reduce to size after .7s	
-	var playerPos = position;
-	queue.push_front(position);
+	# reduce to size after .7s
+	if (state = States.Attacking):
+		queue.push_front(position);
+		if (queue.size() > MAX_LENGTH_TRAIL):
+			queue.pop_back();
 		
-	if (queue.size() > MAX_LENGTH_TRAIL):
-		queue.pop_back();
+		$AnimatedSprite2D/Trail.clear_points();
 		
-	$AnimatedSprite2D/Trail.clear_points();
-		
-	for point in queue:
-		$AnimatedSprite2D/Trail.add_point(point);	
+		for point in queue:
+			$AnimatedSprite2D/Trail.add_point(point);
+	
+	
 "
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vl742"]
@@ -300,16 +294,14 @@ _data = {
 "Attack": SubResource("Animation_0aact")
 }
 
-[sub_resource type="Curve" id="Curve_g6suf"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.506306, 0.815023), 0.0, 0.0, 0, 0, Vector2(1, 0.178359), 0.0, 0.0, 0, 0]
-point_count = 3
-
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_v0pb8"]
 radius = 4.0
 height = 10.0
 
 [node name="Rton" type="CharacterBody2D"]
 script = SubResource("GDScript_3fylj")
+SPEED = null
+VERTICAL_SPEED = null
 MAX_LENGTH_TRAIL = 10
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -344,8 +336,7 @@ libraries = {
 show_behind_parent = true
 top_level = true
 width = 6.0
-width_curve = SubResource("Curve_g6suf")
-default_color = Color(1, 0, 0.109804, 1)
+default_color = Color(0.48914, 0, 0.110731, 0.690196)
 script = ExtResource("2_5xuv2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

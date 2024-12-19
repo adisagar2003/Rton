@@ -10,6 +10,4 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	var pos = animated_sprite_2d.global_position;
-	add_point(pos);
 	pass
