@@ -46,7 +46,7 @@ func _physics_process(delta: float) -> void:
 	# Implement dash duration;
 	if isDashing:
 			
-		position = lerp(position, positionAfterDash, delta*100);
+		move_and_collide(positionAfterDash);
 	
 	
 func HandleSpriteFlip():
@@ -122,10 +122,10 @@ func _on_timer_timeout() -> void:
 	
 # HANDLE LINE2d TRAIL
 func DashTrail():
-	if isDashing:
-		$AnimatedSprite2D/Trail.width = 6;
-	else:
+	if !isDashing:
 		$AnimatedSprite2D/Trail.width = 1;
+	else:
+		$AnimatedSprite2D/Trail.width = 6;
 		
 	# when attacking, show trail,
 	# should be thin at end
