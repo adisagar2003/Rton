@@ -26,12 +26,12 @@ func _physics_process(delta: float) -> void:
 	#else:
 		#velocity.x = move_toward(velocity.x, 0, SPEED)
 	Enemy();
-	print(velocity);
 	if (velocity.x < 0):
 		$Sprite2D.flip_h = true;
 	if (velocity.x > 0):
 		$Sprite2D.flip_h = false;
 	if (player):	
+		
 		position = position.move_toward(player.position,delta*SPEED);
 	
 	move_and_slide()

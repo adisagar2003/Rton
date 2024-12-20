@@ -6,7 +6,6 @@
 [sub_resource type="GDScript" id="GDScript_3fylj"]
 script/source = "extends CharacterBody2D
 
-
 @export var SPEED = 150.0;
 @export var VERTICAL_SPEED = 50.0;
 #DASH
@@ -17,6 +16,8 @@ var isDashing = false;
 var positionAfterDash = Vector2(0,0)
 var dash_duration = 0.1;
 var elapsed_time = 0;
+
+var time  = 0;
 
 #TRAIL
 var queue : Array
@@ -42,12 +43,16 @@ func _physics_process(delta: float) -> void:
 	AnimHandle();
 	HandleAttack(delta);
 	DashTrail();
-	move_and_slide();
 	# Implement dash duration;
-	if isDashing:
-			
-		position = lerp(position, positionAfterDash, delta*100);
 	
+	move_and_slide();
+	if isDashing:
+		if facingDirection == FacingDirection.Left:
+			# 27 pixels / time from dash timer.
+			velocity.x = 638.28*-1;
+		else:
+			velocity.x = 636.29*1;
+			
 	
 func HandleSpriteFlip():
 	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
@@ -70,6 +75,7 @@ func AnimHandle():
 
 func HandleAttack(delta):
 	if Input.is_action_just_pressed(\"Attack\"):
+		var time = 0;
 		if (state == States.Attacking):
 			pass
 
@@ -78,46 +84,51 @@ func HandleAttack(delta):
 			state = States.Attacking;
 			
 			var dashDirection = 1;
+			# Set dash direction accordingly
 			if (facingDirection == 0):
 				dashDirection = -1;
 			else:
 				dashDirection = 1;
 			 
 			# push to the required direction
-			positionAfterDash = Vector2(position.x+dashDirection*27,position.y)
+			
 			isDashing = true;
 			# Start the attack cooldown
 			$AttackCooldown.start();
+			# Start dashing 
+			$DashTimer.start();
 			
 func StopAttack():
 	pass
 
 func HandleInputMovement():
-	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
-	var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
-	if verticalDirection:
-		velocity.y = verticalDirection;
-	else:
-		velocity.y = move_toward(velocity.y, 0, SPEED);
-	if direction:
-		velocity.x = direction;
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED);
-		if (state !=States.Attacking):
-			state = States.Idle;
-	# NORMALIZE VELOCITY
-	velocity = velocity.normalized() * SPEED;
-	#Handle states
-	if (velocity != Vector2.ZERO and state != States.Attacking):
-		state = States.Running;
-	# handle when pressing both buttons, reduce the speed a lil.
-	#var pos = animated_sprite_2d.global_position;
-	#add_point(pos);	
+	if (!isDashing):
+		var direction := Input.get_axis(\"ui_left\", \"ui_right\");
+		var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
+		if verticalDirection:
+			velocity.y = verticalDirection;
+		else:
+			velocity.y = move_toward(velocity.y, 0, SPEED);
+		if direction:
+			velocity.x = direction;
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED);
+			if (state !=States.Attacking):
+				state = States.Idle;
+		# NORMALIZE VELOCITY
+		velocity = velocity.normalized() * SPEED;
+		#Handle states
+		if (velocity != Vector2.ZERO and state != States.Attacking):
+			state = States.Running;
+		# handle when pressing both buttons, reduce the speed a lil.
+		#var pos = animated_sprite_2d.global_position;
+		#add_point(pos);	
 	
 func _on_timer_timeout() -> void:
 	queue.clear();
 	state = States.Idle;
-	isDashing = false;
+	
+	time = 0;
 	pass # Replace with function body.
 	
 # HANDLE LINE2d TRAIL
@@ -141,8 +152,11 @@ func DashTrail():
 	for point in queue:
 		$AnimatedSprite2D/Trail.add_point(point);	
 
+func Player():
+	pass
 
 func _on_dash_timer_timeout() -> void:
+	isDashing = false;
 	pass # Replace with function body.
 "
 
@@ -366,7 +380,7 @@ wait_time = 0.5
 one_shot = true
 
 [node name="DashTimer" type="Timer" parent="."]
-wait_time = 0.2
+wait_time = 0.047
 one_shot = true
 
 [connection signal="timeout" from="AttackCooldown" to="." method="_on_timer_timeout"]
