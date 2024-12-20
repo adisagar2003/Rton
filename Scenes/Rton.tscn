@@ -43,9 +43,11 @@ func _physics_process(delta: float) -> void:
 	AnimHandle();
 	HandleAttack(delta);
 	DashTrail();
-	# Implement dash duration;
-	
 	move_and_slide();
+	
+	
+	
+	# Implement dash duration;
 	if isDashing:
 		if facingDirection == FacingDirection.Left:
 			# 27 pixels / time from dash timer.
@@ -123,11 +125,11 @@ func HandleInputMovement():
 		# handle when pressing both buttons, reduce the speed a lil.
 		#var pos = animated_sprite_2d.global_position;
 		#add_point(pos);	
+		
 	
 func _on_timer_timeout() -> void:
 	queue.clear();
 	state = States.Idle;
-	
 	time = 0;
 	pass # Replace with function body.
 	
@@ -154,6 +156,13 @@ func DashTrail():
 
 func Player():
 	pass
+
+# for enemies to see
+func getState() -> String:
+	if (state == States.Attacking):
+		return \"Attacking\";
+	else:
+		return \"\";
 
 func _on_dash_timer_timeout() -> void:
 	isDashing = false;
