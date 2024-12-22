@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy3o3l5xs18xe"]
+[gd_scene load_steps=6 format=3 uid="uid://dy3o3l5xs18xe"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_dog.gd" id="1_hqd5h"]
 [ext_resource type="Texture2D" uid="uid://i1rhrs04alis" path="res://Scenes/enemy1.png" id="1_lincp"]
@@ -12,13 +12,6 @@ radius = 60.0083
 [sub_resource type="CircleShape2D" id="CircleShape2D_27u44"]
 radius = 6.0
 
-[sub_resource type="Curve2D" id="Curve2D_2gx2y"]
-bake_interval = 6.6
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0)
-}
-point_count = 2
-
 [node name="EnemyDog" type="CharacterBody2D"]
 script = ExtResource("1_hqd5h")
 
@@ -26,19 +19,16 @@ script = ExtResource("1_hqd5h")
 texture = ExtResource("1_lincp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
 position = Vector2(0, 0.5)
 shape = SubResource("CircleShape2D_o6vwy")
 
 [node name="PlayerDetection" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetection"]
 shape = SubResource("CircleShape2D_xp4gu")
 debug_color = Color(0.178526, 0.62056, 0.483693, 0.42)
 
 [node name="HurtBox" type="Area2D" parent="."]
-visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
 shape = SubResource("CircleShape2D_27u44")
@@ -51,9 +41,22 @@ one_shot = true
 [node name="Death_Timer" type="Timer" parent="."]
 wait_time = 0.303
 
-[node name="Path2D" type="Path2D" parent="."]
-curve = SubResource("Curve2D_2gx2y")
+[node name="Patrol_Timer" type="Timer" parent="."]
+wait_time = 0.7
+one_shot = true
 
+[node name="Chase_Timer" type="Timer" parent="."]
+wait_time = 0.715
+one_shot = true
+
+[node name="Wait_Timer" type="Timer" parent="."]
+wait_time = 1.4
+one_shot = true
+
+[connection signal="body_entered" from="PlayerDetection" to="." method="_on_player_detection_body_entered"]
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="timeout" from="Enemy_Timer" to="." method="_on_enemy_timer_timeout"]
 [connection signal="timeout" from="Death_Timer" to="." method="_on_death_timer_timeout"]
+[connection signal="timeout" from="Patrol_Timer" to="." method="_on_patrol_timer_timeout"]
+[connection signal="timeout" from="Chase_Timer" to="." method="_on_chase_timer_timeout"]
+[connection signal="timeout" from="Wait_Timer" to="." method="_on_wait_timer_timeout"]

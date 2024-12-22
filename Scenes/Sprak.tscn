@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://dpfm30je8fvq2"]
+
+[ext_resource type="Texture2D" uid="uid://brm8q1lch76ab" path="res://Scenes/Spark.png" id="1_p3wqg"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_unf8p"]
+atlas = ExtResource("1_p3wqg")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s123r"]
+atlas = ExtResource("1_p3wqg")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nt7t6"]
+atlas = ExtResource("1_p3wqg")
+region = Rect2(16, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g78u2"]
+atlas = ExtResource("1_p3wqg")
+region = Rect2(0, 8, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_62gny"]
+atlas = ExtResource("1_p3wqg")
+region = Rect2(8, 8, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qx654"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_unf8p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s123r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nt7t6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g78u2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_62gny")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_wqn4q"]
+
+[node name="Sprak" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(1, 1)
+sprite_frames = SubResource("SpriteFrames_qx654")
+frame_progress = 0.707169
+metadata/_aseprite_wizard_interface_config_ = {
+"pending_changes": {}
+}
+metadata/_aseprite_wizard_config_ = {
+"layers": [],
+"o_ex_p": "",
+"o_folder": "",
+"o_name": "",
+"only_visible": false,
+"should_round_fps": true,
+"slice": "",
+"source": "res://Assets/Aesprite/Spark.aseprite"
+}
+metadata/_aseprite_wizard_source_file_hash_ = "b9fe8814a807aad67344d50900d72e33"
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+color = Color(0.950995, 0.139539, 0.405092, 1)
+energy = 3.0
+texture = SubResource("CanvasTexture_wqn4q")
+texture_scale = 5.35

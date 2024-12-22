@@ -7,13 +7,19 @@
 size = Vector2(5, 5)
 
 [node name="Carcass" type="RigidBody2D"]
+collision_layer = 0
+collision_mask = 0
+mass = 0.031
+gravity_scale = 0.584
 linear_velocity = Vector2(-300, -20)
 angular_velocity = 20.944
 script = ExtResource("1_14etw")
+linearXVelocity = -30
+linearYVelocity = 20
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-light_mask = 2
-visibility_layer = 2
+light_mask = 0
+visibility_layer = 0
 shape = SubResource("RectangleShape2D_n08s6")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

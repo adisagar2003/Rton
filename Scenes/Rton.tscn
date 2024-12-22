@@ -17,8 +17,9 @@ var isDashing = false;
 var positionAfterDash = Vector2(0,0)
 var dash_duration = 0.1;
 var elapsed_time = 0;
-
+var health = 100;
 var time  = 0;
+@onready var camera_shake: Node = $\"../CameraShake\";
 
 #TRAIL
 var queue : Array
@@ -38,6 +39,9 @@ var state_names = {
 var state = States.Idle;
 var facingDirection = FacingDirection.Left;
 
+# Should be propelled to this direction when hurt.
+var propellDirection = Vector2.ZERO;
+
 func _ready() -> void:
 	print(
 		{\"global_position\":global_position}
@@ -53,6 +57,11 @@ func _physics_process(delta: float) -> void:
 	move_and_slide();
 	
 	
+	#implement hurt.
+	if (state == States.Hurt):
+		print(\"\")
+		velocity = propellDirection;
+		
 	
 	# Implement dash duration;
 	if isDashing:
@@ -83,8 +92,10 @@ func AnimHandle():
 		$AnimatedSprite2D.play(\"attack\");
 
 func HandleAttack(delta):
-	if Input.is_action_just_pressed(\"Attack\"):
+	if Input.is_action_just_pressed(\"Attack\") and state == States.Idle:
 		var time = 0;
+		
+		# Check if already attacking
 		if (state == States.Attacking):
 			pass
 
@@ -111,7 +122,7 @@ func StopAttack():
 	pass
 
 func HandleInputMovement():
-	if (!isDashing):
+	if (!isDashing and state== States.Idle):
 		var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 		var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
 		if verticalDirection:
@@ -127,8 +138,6 @@ func HandleInputMovement():
 		# NORMALIZE VELOCITY
 		velocity = velocity.normalized() * SPEED;
 		#Handle states
-		if (velocity != Vector2.ZERO and state != States.Attacking):
-			state = States.Running;
 		# handle when pressing both buttons, reduce the speed a lil.
 		#var pos = animated_sprite_2d.global_position;
 		#add_point(pos);	
@@ -164,6 +173,28 @@ func DashTrail():
 func Player():
 	pass
 
+# Case where player gets hurt
+
+func getHurt(AttackDirection):
+	# reduce the health.
+	print(\"GetHurt\")
+	health-=20;
+	# handle death.
+	if (health < 0):
+		get_tree().paused = true;
+		$\"../GameOverScreen\".visible = true;
+	else:
+		print(\"Should be propelling outside now\");
+		propellDirection = AttackDirection * 400;
+		# Apply camera shake
+		camera_shake.shakeTheCamera();
+		# set trail  invisible.
+		$AnimatedSprite2D/Trail.visible= false;
+		state = States.Hurt;
+		$HurtTimer.start();
+	pass
+
+
 # for enemies to see
 func getState() -> String:
 	if (state == States.Attacking):
@@ -173,6 +204,13 @@ func getState() -> String:
 
 func _on_dash_timer_timeout() -> void:
 	isDashing = false;
+	pass # Replace with function body.
+
+
+func _on_hurt_timer_timeout() -> void:
+	state = States.Idle;
+	velocity = Vector2.ZERO;
+	$AnimatedSprite2D/Trail.visible= true;
 	pass # Replace with function body.
 "
 
@@ -356,8 +394,6 @@ MAX_LENGTH_TRAIL = 10
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_jv7t3")
 animation = &"attack"
-frame = 3
-frame_progress = 0.563539
 metadata/_aseprite_wizard_interface_config_ = {
 "layer_section": true,
 "pending_changes": {}
@@ -392,12 +428,16 @@ script = ExtResource("2_5xuv2")
 shape = SubResource("CapsuleShape2D_v0pb8")
 
 [node name="AttackCooldown" type="Timer" parent="."]
-wait_time = 0.5
+wait_time = 0.315
 one_shot = true
 
 [node name="DashTimer" type="Timer" parent="."]
-wait_time = 0.047
+wait_time = 0.055
 one_shot = true
+
+[node name="HurtTimer" type="Timer" parent="."]
+wait_time = 0.295
 
 [connection signal="timeout" from="AttackCooldown" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="DashTimer" to="." method="_on_dash_timer_timeout"]
+[connection signal="timeout" from="HurtTimer" to="." method="_on_hurt_timer_timeout"]

@@ -6,19 +6,26 @@ var carcass2 = preload("res://Scenes/Carcass.tscn")
 @onready var player = $"../Rton";
 @onready var cameraShake = $"../CameraShake";
 # health
-@export var health = 10;
+@export var health = 20;
 
+@onready var navGrid = $"../Navgrid";
+@export var reboundStrength = 500;
 # 
-enum State {PATROL, HURT, CHASE, ATTACK}
-var state = State.PATROL;
-var randomLocation = Vector2.ZERO
+enum State {IDLE ,PATROL, HURT, CHASE, ATTACK, WAIT}
+var state = State.IDLE;
+var randomNewLocationDirection = Vector2.ZERO
 
 @export var SPEED = 100;
 # try to get the player reference
 	
-func _ready() -> void:
-	Patrol();
 
+	
+var hasReached = false;
+var randomNewLocation = Vector2(0,0);
+func _ready() -> void:
+	$Patrol_Timer.start();
+	pass
+	
 func _physics_process(delta: float) -> void:
 	# Add the gravity.
 	#if not is_on_floor():
@@ -35,26 +42,74 @@ func _physics_process(delta: float) -> void:
 		#velocity.x = direction * SPEED
 	#else:
 		#velocity.x = move_toward(velocity.x, 0, SPEED)
+		
+	print(state)
 	Enemy();
 	if (velocity.x < 0):
 		$Sprite2D.flip_h = true;
 	if (velocity.x > 0):
 		$Sprite2D.flip_h = false;
+	
+	#IDLE STATE
+	if state == State.IDLE:
+		velocity = Vector2.ZERO;
+		
+		
+	# Chase state --- Chase the player;
+	if state == State.CHASE:
+		# get the direction towards player;
+		var directionTowardsPlayer = position.direction_to(player.position);
+		velocity = directionTowardsPlayer * 80;
+		print(
+			{ "GU":
+			position.distance_to(player.position)
+			}
+			)
+		if (position.distance_to(player.position) < 10):
+			if (player.getState() != "Attacking"):
+				state = State.ATTACK;
+				player.getHurt(directionTowardsPlayer);
+				# all enemies should wait for a while 
+			
+				startTheWaitTimer();
+				state = State.WAIT;
+				pass
+			pass
+		pass
+		
+	# PATROL STATE... GETTING A RANDOM Location to go
+	if state == State.PATROL:
+		# find direction towards the random location;
+		var directionTowardsRandomLocation = global_position.direction_to(randomNewLocation);
+		velocity = directionTowardsRandomLocation*50;
+		if (position.distance_to(randomNewLocation) < 6):
+			state = State.IDLE;
+			$Patrol_Timer.start();
 	move_and_collide(velocity*delta)
+	
+	# WAIT State... wait for a while...start chasing again
 	
 func Enemy():
 	pass
 	
-func Patrol():
-	# find a random location in the grid.
-	# move towards the random location.
-	# simple.
+
 	
-	pass
+# Find a random point to start patrolling
+func getRandomLocationDirectionToGo():
+	var randomLocationToGo = navGrid.getRandomPointInArea();
+	var directionToRandomPosition = position.direction_to(randomLocationToGo);
+	return randomLocationToGo;
 	
+	
+
 func TakeDamage():
 	health -= 10
 
+func startTheWaitTimer():
+	# this would prevent from calling it recursively.
+	if (state != State.WAIT):
+		$Wait_Timer.start();
+	pass
 
 func _on_hurt_box_body_entered(body: Node2D) -> void:
 	if (body.has_method("Player")):
@@ -75,8 +130,10 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 					# use a timer for calculating the duration of impulsive velocity
 					
 				var directionOfPush = position.direction_to(player.position) * -1;
-				velocity = directionOfPush * 700;
+				velocity = directionOfPush * reboundStrength;
 				health = health -10;
+				# set a timer here.. need to fall back and start attacking.. not immediately
+				$Chase_Timer.start();
 				if (health < 0):
 					
 					#modified death 
@@ -92,9 +149,7 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 						get_tree().current_scene.add_child(c2);
 						c1.position = position;
 						c2.position = Vector2(position.x+6, position.y)
-					isCarcassAdded = true;
-					
-					$CollisionShape2D.disabled = true;
+						isCarcassAdded = true;
 					
 					$Death_Timer.start();
 					
@@ -111,6 +166,7 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 	pass # Replace with function body.
 
 
+
 func _on_enemy_timer_timeout() -> void:
 	velocity = position.direction_to(player.position)*20
 	pass # Replace with function body.
@@ -118,4 +174,31 @@ func _on_enemy_timer_timeout() -> void:
 
 func _on_death_timer_timeout() -> void:
 	queue_free()
+	pass # Replace with function body.
+
+
+# THIS IS CALLED TO START PATROLLING FROM IDLE FIRST 
+func _on_patrol_timer_timeout() -> void:
+	randomNewLocation = navGrid.getRandomPointInArea();
+	state = State.PATROL
+	pass # Replace with function body.
+
+
+func _on_player_detection_body_entered(body: Node2D) -> void:
+	# detect if player entered
+	if body.has_method("Player"):
+		
+		state = State.CHASE
+	pass # Replace with function body.
+
+
+func _on_chase_timer_timeout() -> void:
+	print("Start chasing player");
+	state = State.CHASE;
+	
+	pass # Replace with function body.
+
+
+func _on_wait_timer_timeout() -> void:
+	state  =State.CHASE
 	pass # Replace with function body.
