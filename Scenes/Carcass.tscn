@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://c1ew353r0ev7v"]
+
+[ext_resource type="Script" path="res://Scenes/carcass.gd" id="1_14etw"]
+[ext_resource type="Texture2D" uid="uid://b65dfle8udvj2" path="res://Assets/Aesprite/carcass1.png" id="2_mtuqt"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n08s6"]
+size = Vector2(5, 5)
+
+[node name="Carcass" type="RigidBody2D"]
+linear_velocity = Vector2(-300, -20)
+angular_velocity = 20.944
+script = ExtResource("1_14etw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 2
+visibility_layer = 2
+shape = SubResource("RectangleShape2D_n08s6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(2, -2)
+texture = ExtResource("2_mtuqt")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 4.0
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy3o3l5xs18xe"]
+[gd_scene load_steps=10 format=3 uid="uid://dy3o3l5xs18xe"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_dog.gd" id="1_hqd5h"]
 [ext_resource type="Texture2D" uid="uid://i1rhrs04alis" path="res://Scenes/enemy1.png" id="1_lincp"]
@@ -12,15 +12,19 @@ radius = 60.0083
 [sub_resource type="CircleShape2D" id="CircleShape2D_27u44"]
 radius = 6.0
 
-[sub_resource type="Curve2D" id="Curve2D_2gx2y"]
-bake_interval = 6.6
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 50, 0)
-}
-point_count = 2
+[sub_resource type="CircleShape2D" id="CircleShape2D_ys1h0"]
+radius = 3.0
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_2w2gy"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_d0hjh"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_12lqn"]
 
 [node name="EnemyDog" type="CharacterBody2D"]
 script = ExtResource("1_hqd5h")
+health = null
+SPEED = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_lincp")
@@ -45,15 +49,32 @@ shape = SubResource("CircleShape2D_27u44")
 debug_color = Color(0.911901, 0.200797, 0.543849, 0.42)
 
 [node name="Enemy_Timer" type="Timer" parent="."]
-wait_time = 0.137
-one_shot = true
+wait_time = 0.032
 
-[node name="Death_Timer" type="Timer" parent="."]
-wait_time = 0.303
+[node name="Carcass1" type="RigidBody2D" parent="."]
 
-[node name="Path2D" type="Path2D" parent="."]
-curve = SubResource("Curve2D_2gx2y")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Carcass1"]
+position = Vector2(-3, 1)
+shape = SubResource("CircleShape2D_ys1h0")
+debug_color = Color(0.984925, 0.120764, 0, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="Carcass1"]
+position = Vector2(-3, 1)
+scale = Vector2(4.5, 4.5)
+texture = SubResource("CanvasTexture_2w2gy")
+
+[node name="Carcass2" type="RigidBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Carcass2"]
+position = Vector2(3, 1)
+shape = SubResource("CircleShape2D_ys1h0")
+debug_color = Color(0.99567, 0, 0.201101, 0.42)
+
+[node name="Sprite2D" type="Sprite2D" parent="Carcass2"]
+material = SubResource("CanvasItemMaterial_d0hjh")
+position = Vector2(3, 1)
+scale = Vector2(4, 4)
+texture = SubResource("CanvasTexture_12lqn")
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]
 [connection signal="timeout" from="Enemy_Timer" to="." method="_on_enemy_timer_timeout"]
-[connection signal="timeout" from="Death_Timer" to="." method="_on_death_timer_timeout"]
