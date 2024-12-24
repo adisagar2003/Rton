@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dctd3mo6ch5op"]
+
+[ext_resource type="FontFile" uid="uid://b0acoyelpd2jf" path="res://Crumbled-Pixels.ttf" id="1_x8oeb"]
+
+[resource]
+base_font = ExtResource("1_x8oeb")

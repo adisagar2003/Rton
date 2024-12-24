@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://b2x1fao2rgsgu"]
+[gd_scene load_steps=25 format=4 uid="uid://b2x1fao2rgsgu"]
 
 [ext_resource type="Script" path="res://Scenes/main.gd" id="1_wxmgi"]
 [ext_resource type="Texture2D" uid="uid://delgcyt4urcvu" path="res://Assets/Tileset/Sprite-0001.png" id="3_rt66f"]
@@ -10,6 +10,14 @@
 [ext_resource type="Script" path="res://Scenes/CameraShake.gd" id="7_mm0ec"]
 [ext_resource type="Script" path="res://Scenes/navgrid.gd" id="8_w1xu8"]
 [ext_resource type="PackedScene" uid="uid://db3dh8ap0glsn" path="res://Scenes/UI.tscn" id="10_qii8s"]
+[ext_resource type="FontVariation" uid="uid://dctd3mo6ch5op" path="res://pixelfont.tres" id="11_k8rfs"]
+[ext_resource type="Script" path="res://Scenes/retry_button.gd" id="11_rwaoi"]
+[ext_resource type="Script" path="res://Scenes/health_bar.gd" id="11_x6uvd"]
+[ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="12_kv6sv"]
+[ext_resource type="Texture2D" uid="uid://c7gpc1ltriedh" path="res://Scenes/scoreTexture.png" id="15_4j5op"]
+[ext_resource type="Script" path="res://Scenes/score.gd" id="15_gpbdu"]
+[ext_resource type="Texture2D" uid="uid://brm8q1lch76ab" path="res://Scenes/Spark.png" id="15_qs3xa"]
+[ext_resource type="Script" path="res://Scenes/enemy_manager.gd" id="18_3astw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kdr2c"]
 texture = ExtResource("3_rt66f")
@@ -241,6 +249,11 @@ sources/1 = SubResource("TileSetAtlasSource_uxybs")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_v4myh"]
 size = Vector2(206, 108)
 
+[sub_resource type="Theme" id="Theme_aa3pa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jfpes"]
+bg_color = Color(0.537512, 0, 0.164685, 1)
+
 [node name="Node2D" type="Node2D"]
 top_level = true
 script = ExtResource("1_wxmgi")
@@ -311,22 +324,120 @@ offset_right = 2.0
 
 [node name="GameOverScreen" type="CanvasLayer" parent="."]
 visible = false
+scale = Vector2(5, 5)
+transform = Transform2D(5, 0, 0, 5, 0, 0)
 
 [node name="Control" type="Control" parent="GameOverScreen"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 127.0
+offset_bottom = 71.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="GameOverScreen/Control"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -27.5
+offset_top = -20.0
+offset_right = 27.5
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Label" type="Label" parent="GameOverScreen/Control/VBoxContainer"]
 layout_mode = 2
+theme = SubResource("Theme_aa3pa")
+theme_override_colors/font_color = Color(0.854343, 0, 0.229811, 1)
 text = "Game Over"
 
 [node name="Button" type="Button" parent="GameOverScreen/Control/VBoxContainer"]
 layout_mode = 2
 text = "Retry"
+script = ExtResource("11_rwaoi")
+
+[node name="HealthScreen" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="HealthScreen"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="HealthScreen/Control"]
+layout_mode = 0
+offset_right = 118.0
+offset_bottom = 24.0
+color = Color(0.0142752, 0.0142752, 0.0142752, 1)
+
+[node name="ProgressBar" type="ProgressBar" parent="HealthScreen/Control/ColorRect"]
+layout_mode = 0
+offset_top = -1.0
+offset_right = 118.0
+offset_bottom = 26.0
+theme_override_styles/fill = SubResource("StyleBoxFlat_jfpes")
+value = 100.0
+script = ExtResource("11_x6uvd")
+
+[node name="Label" type="Label" parent="HealthScreen/Control/ColorRect/ProgressBar"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = -33.0
+offset_right = 81.0
+offset_bottom = -10.0
+theme_override_fonts/font = ExtResource("11_k8rfs")
+text = " Health"
+
+[node name="Sprite2D" type="Sprite2D" parent="HealthScreen/Control/ColorRect"]
+
+[node name="Main-char" type="Sprite2D" parent="HealthScreen/Control/ColorRect"]
+position = Vector2(15, 14.9844)
+scale = Vector2(3.5625, 3.55208)
+texture = ExtResource("12_kv6sv")
+region_enabled = true
+region_rect = Rect2(0, 0, 8.12312, 9.42716)
+
+[node name="ColorRect2" type="Sprite2D" parent="HealthScreen/Control"]
+position = Vector2(602, 0)
+region_rect = Rect2(0, 0, 24, 16)
+
+[node name="Sprite2D2" type="Sprite2D" parent="HealthScreen/Control/ColorRect2"]
+position = Vector2(12, 22)
+scale = Vector2(7.1795, 7.1795)
+texture = ExtResource("15_qs3xa")
+region_enabled = true
+region_rect = Rect2(-0.0149274, 7.72878, 7.24136, 7.47622)
+
+[node name="Sprite2D" type="Sprite2D" parent="HealthScreen/Control/ColorRect2"]
+position = Vector2(12, 21)
+scale = Vector2(0.421875, 0.390625)
+texture = ExtResource("15_4j5op")
+region_enabled = true
+region_rect = Rect2(0, 0, 127.619, 115.955)
+
+[node name="Label" type="Label" parent="HealthScreen/Control/ColorRect2"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 7.5
+offset_top = 18.5
+offset_right = 15.5
+offset_bottom = 31.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("15_gpbdu")
+
+[node name="EnemyManager" type="Node2D" parent="."]
+script = ExtResource("18_3astw")

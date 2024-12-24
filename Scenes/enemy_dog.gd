@@ -43,41 +43,43 @@ func _physics_process(delta: float) -> void:
 	#else:
 		#velocity.x = move_toward(velocity.x, 0, SPEED)
 		
-	print(state)
-	Enemy();
-	if (velocity.x < 0):
-		$Sprite2D.flip_h = true;
-	if (velocity.x > 0):
-		$Sprite2D.flip_h = false;
-	
-	#IDLE STATE
-	if state == State.IDLE:
-		velocity = Vector2.ZERO;
+	if (player == null):
+		state = State.PATROL;
+	else:
+		Enemy();
+		if (velocity.x < 0):
+			$Sprite2D.flip_h = true;
+		if (velocity.x > 0):
+			$Sprite2D.flip_h = false;
 		
-		
-	# Chase state --- Chase the player;
-	if state == State.CHASE:
-		# get the direction towards player;
-		var directionTowardsPlayer = position.direction_to(player.position);
-		velocity = directionTowardsPlayer * 80;
-		if (position.distance_to(player.position) < 12):
-			if (player.getState() != "Attacking"):
-				player.getHurt(directionTowardsPlayer);
-				# all enemies should wait for a while 
-				startTheWaitTimer();
-				state = State.WAIT;
+		#IDLE STATE
+		if state == State.IDLE:
+			velocity = Vector2.ZERO;
+			
+			
+		# Chase state --- Chase the player;
+		if state == State.CHASE:
+			# get the direction towards player;
+			var directionTowardsPlayer = position.direction_to(player.position);
+			velocity = directionTowardsPlayer * 80;
+			if (position.distance_to(player.position) < 12):
+				if (player.getState() != "Attacking"):
+					player.getHurt(directionTowardsPlayer);
+					# all enemies should wait for a while 
+					startTheWaitTimer();
+					state = State.WAIT;
+					pass
 				pass
 			pass
-		pass
-		
-	# PATROL STATE... GETTING A RANDOM Location to go
-	if state == State.PATROL:
-		# find direction towards the random location;
-		var directionTowardsRandomLocation = global_position.direction_to(randomNewLocation);
-		velocity = directionTowardsRandomLocation*50;
-		if (position.distance_to(randomNewLocation) < 6):
-			state = State.IDLE;
-			$Patrol_Timer.start();
+			
+		# PATROL STATE... GETTING A RANDOM Location to go
+		if state == State.PATROL:
+			# find direction towards the random location;
+			var directionTowardsRandomLocation = global_position.direction_to(randomNewLocation);
+			velocity = directionTowardsRandomLocation*50;
+			if (position.distance_to(randomNewLocation) < 6):
+				state = State.IDLE;
+				$Patrol_Timer.start();
 	move_and_collide(velocity*delta)
 	
 	# WAIT State... wait for a while...start chasing again
@@ -145,7 +147,8 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 						isCarcassAdded = true;
 					
 					$Death_Timer.start();
-					
+					# Add 1 to the score
+					player.score += 1;
 					pass
 					# doesnt collide with anything, they just fall
 					# disable all other collisions

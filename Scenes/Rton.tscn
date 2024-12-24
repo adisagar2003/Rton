@@ -18,7 +18,8 @@ var isDashing = false;
 var positionAfterDash = Vector2(0,0)
 var dash_duration = 0.1;
 var elapsed_time = 0;
-var health = 100;
+@export var health = 100;
+@export var score = 0;
 var time  = 0;
 
 #stop the dash time smoothly.
@@ -59,7 +60,6 @@ func _physics_process(delta: float) -> void:
 	HandleAttack(delta);
 	DashTrail();
 	move_and_slide();
-	print(state_names[state])
 	
 	#implement hurt.
 	if (state == States.Hurt):
@@ -187,8 +187,7 @@ func getHurt(AttackDirection):
 	# reduce the health.
 	health-=20;
 	# handle death.
-	if (health < 0):
-		get_tree().paused = true;
+	if (health == 0):
 		$\"../GameOverScreen\".visible = true;
 	else:
 		propellDirection = AttackDirection * 400;
