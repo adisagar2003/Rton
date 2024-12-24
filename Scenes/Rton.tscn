@@ -12,6 +12,7 @@ script/source = "extends CharacterBody2D
 #DASH
 var dashDirection = 1.0;
 @export var DASH_INTENSITY = 270.0;
+@export var DASH_COOLDOWN_INTENSITY = 57.0;
 const JUMP_VELOCITY = -400.0
 var isDashing = false;
 var positionAfterDash = Vector2(0,0)
@@ -19,13 +20,18 @@ var dash_duration = 0.1;
 var elapsed_time = 0;
 var health = 100;
 var time  = 0;
+
+#stop the dash time smoothly.
+var smoothDashFade = .03;
+var stopDashTime = 0;
+
 @onready var camera_shake: Node = $\"../CameraShake\";
 
 #TRAIL
 var queue : Array
 @export var MAX_LENGTH_TRAIL: int
 
-enum States {Idle, Running, Attacking, Hurt};
+enum States {Idle, Running, Attacking, Hurt, Dashing};
 
 enum FacingDirection {Left, Right};
 
@@ -34,7 +40,8 @@ var state_names = {
 	States.Idle: \"Idle\",
 	States.Running: \"Running\",
 	States.Attacking: \"Attacking\",
-	States.Hurt: \"Hurt\"
+	States.Hurt: \"Hurt\",
+	States.Dashing:\"Dashing\"
 }
 var state = States.Idle;
 var facingDirection = FacingDirection.Left;
@@ -43,10 +50,7 @@ var facingDirection = FacingDirection.Left;
 var propellDirection = Vector2.ZERO;
 
 func _ready() -> void:
-	print(
-		{\"global_position\":global_position}
-	)
-
+	pass
 func _physics_process(delta: float) -> void:
 
 	HandleInputMovement();
@@ -55,22 +59,26 @@ func _physics_process(delta: float) -> void:
 	HandleAttack(delta);
 	DashTrail();
 	move_and_slide();
-	
+	print(state_names[state])
 	
 	#implement hurt.
 	if (state == States.Hurt):
-		print(\"\")
 		velocity = propellDirection;
 		
 	
 	# Implement dash duration;
 	if isDashing:
+		state = States.Dashing;
 		if facingDirection == FacingDirection.Left:
 			# 27 pixels / time from dash timer.
 			velocity.x = 638.28*-1;
 		else:
 			velocity.x = 636.29*1;
-			
+	
+	while stopDashTime > 0:
+		velocity = lerp(velocity, Vector2.ZERO, delta * DASH_COOLDOWN_INTENSITY);
+		stopDashTime-= delta * DASH_COOLDOWN_INTENSITY;
+		pass			
 	
 func HandleSpriteFlip():
 	var direction := Input.get_axis(\"ui_left\", \"ui_right\");
@@ -122,7 +130,7 @@ func StopAttack():
 	pass
 
 func HandleInputMovement():
-	if (!isDashing and state== States.Idle):
+	if (!isDashing and state == States.Idle):
 		var direction := Input.get_axis(\"ui_left\", \"ui_right\");
 		var verticalDirection := Input.get_axis(\"ui_up\", \"ui_down\");
 		if verticalDirection:
@@ -177,14 +185,12 @@ func Player():
 
 func getHurt(AttackDirection):
 	# reduce the health.
-	print(\"GetHurt\")
 	health-=20;
 	# handle death.
 	if (health < 0):
 		get_tree().paused = true;
 		$\"../GameOverScreen\".visible = true;
 	else:
-		print(\"Should be propelling outside now\");
 		propellDirection = AttackDirection * 400;
 		# Apply camera shake
 		camera_shake.shakeTheCamera();
@@ -199,11 +205,15 @@ func getHurt(AttackDirection):
 func getState() -> String:
 	if (state == States.Attacking):
 		return \"Attacking\";
+	elif (state == States.Dashing):
+		return \"Attacking\";
 	else:
 		return \"\";
 
 func _on_dash_timer_timeout() -> void:
 	isDashing = false;
+	# Start stop move function. 
+	stopDashTime = 0.02;
 	pass # Replace with function body.
 
 
@@ -432,7 +442,7 @@ wait_time = 0.315
 one_shot = true
 
 [node name="DashTimer" type="Timer" parent="."]
-wait_time = 0.055
+wait_time = 0.047
 one_shot = true
 
 [node name="HurtTimer" type="Timer" parent="."]

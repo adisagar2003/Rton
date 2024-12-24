@@ -60,17 +60,10 @@ func _physics_process(delta: float) -> void:
 		# get the direction towards player;
 		var directionTowardsPlayer = position.direction_to(player.position);
 		velocity = directionTowardsPlayer * 80;
-		print(
-			{ "GU":
-			position.distance_to(player.position)
-			}
-			)
-		if (position.distance_to(player.position) < 10):
+		if (position.distance_to(player.position) < 12):
 			if (player.getState() != "Attacking"):
-				state = State.ATTACK;
 				player.getHurt(directionTowardsPlayer);
 				# all enemies should wait for a while 
-			
 				startTheWaitTimer();
 				state = State.WAIT;
 				pass
@@ -193,7 +186,6 @@ func _on_player_detection_body_entered(body: Node2D) -> void:
 
 
 func _on_chase_timer_timeout() -> void:
-	print("Start chasing player");
 	state = State.CHASE;
 	
 	pass # Replace with function body.
