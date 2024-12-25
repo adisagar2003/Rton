@@ -1,11 +1,11 @@
 [gd_scene load_steps=24 format=4 uid="uid://b2x1fao2rgsgu"]
 
+[ext_resource type="Script" path="res://Scenes/main.gd" id="1_wxmgi"]
 [ext_resource type="Texture2D" uid="uid://delgcyt4urcvu" path="res://Assets/Tileset/Sprite-0001.png" id="3_rt66f"]
 [ext_resource type="Texture2D" uid="uid://d2ts41q84q8px" path="res://Assets/Tileset/s4m_ur4i_8x8_minimal-future.png" id="4_fe57k"]
 [ext_resource type="PackedScene" uid="uid://ci82aii7lfwk3" path="res://Scenes/Rton.tscn" id="4_nrwo5"]
 [ext_resource type="AudioStream" uid="uid://dcb583ve1vyf7" path="res://Assets/SoundFX/atmosphere/Atmosphere industrial.wav" id="4_ss3gx"]
 [ext_resource type="TileSet" uid="uid://cvprbwmfpy3jc" path="res://Scenes/tronarena.tres" id="5_wf3ai"]
-[ext_resource type="PackedScene" uid="uid://dy3o3l5xs18xe" path="res://Scenes/EnemyDog.tscn" id="6_rs8js"]
 [ext_resource type="Script" path="res://Scenes/CameraShake.gd" id="7_mm0ec"]
 [ext_resource type="Script" path="res://Scenes/navgrid.gd" id="8_w1xu8"]
 [ext_resource type="PackedScene" uid="uid://db3dh8ap0glsn" path="res://Scenes/UI.tscn" id="10_qii8s"]
@@ -255,6 +255,7 @@ bg_color = Color(0.537512, 0, 0.164685, 1)
 
 [node name="Node2D" type="Node2D"]
 top_level = true
+script = ExtResource("1_wxmgi")
 
 [node name="BG_MUSIC" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("4_ss3gx")
@@ -433,8 +434,6 @@ text = "0"
 horizontal_alignment = 1
 vertical_alignment = 1
 script = ExtResource("15_gpbdu")
-
-[node name="EnemyDog" parent="." instance=ExtResource("6_rs8js")]
 
 [node name="EnemyManager" type="Node2D" parent="."]
 script = ExtResource("18_3astw")

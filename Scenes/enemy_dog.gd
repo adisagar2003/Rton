@@ -3,17 +3,18 @@ extends CharacterBody2D
 var carcass1 = preload("res://Scenes/carcass2.tscn")
 var carcass2 = preload("res://Scenes/Carcass.tscn")
 
-@onready var player = $"../Rton";
-@onready var cameraShake = $"../CameraShake";
+@onready var player = get_tree().current_scene.get_node("Rton");
+@onready var cameraShake = get_tree().current_scene.get_node("CameraShake");
 # health
 @export var health = 20;
 
-@onready var navGrid = $"../Navgrid";
+@onready var navGrid = get_tree().current_scene.get_node("Navgrid");
 @export var reboundStrength = 500;
 # 
 enum State {IDLE ,PATROL, HURT, CHASE, ATTACK, WAIT}
 var state = State.IDLE;
 var randomNewLocationDirection = Vector2.ZERO
+@onready var enemy_manager: Node2D = get_tree().current_scene.get_node("EnemyManager")
 
 @export var SPEED = 100;
 # try to get the player reference
@@ -23,6 +24,7 @@ var randomNewLocationDirection = Vector2.ZERO
 var hasReached = false;
 var randomNewLocation = Vector2(0,0);
 func _ready() -> void:
+	print("Enem")
 	$Patrol_Timer.start();
 	pass
 	
@@ -145,9 +147,11 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 						c1.position = position;
 						c2.position = Vector2(position.x+6, position.y)
 						isCarcassAdded = true;
+					# link to enemy manager, remove it from the count.
 					
 					$Death_Timer.start();
 					# Add 1 to the score
+					enemy_manager.currentNumberOfEnemies -= 1;
 					player.score += 1;
 					pass
 					# doesnt collide with anything, they just fall
