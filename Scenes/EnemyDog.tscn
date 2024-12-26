@@ -1,7 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://dy3o3l5xs18xe"]
+[gd_scene load_steps=8 format=3 uid="uid://dy3o3l5xs18xe"]
 
 [ext_resource type="Script" path="res://Scenes/enemy_dog.gd" id="1_hqd5h"]
 [ext_resource type="Texture2D" uid="uid://i1rhrs04alis" path="res://Scenes/enemy1.png" id="1_lincp"]
+[ext_resource type="AudioStream" uid="uid://bnek2s4wr6h4u" path="res://Assets/SoundFX/Animal and caracters/characters/actions and reactions interactions/attack/hit 1 fast attack.wav" id="3_415xn"]
+[ext_resource type="AudioStream" uid="uid://basiv1i7c8tph" path="res://Assets/SoundFX/Animal and caracters/characters/attack/hit 2 medio attack.wav" id="4_k35dy"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_o6vwy"]
 radius = 5.02494
@@ -52,6 +54,15 @@ one_shot = true
 [node name="Wait_Timer" type="Timer" parent="."]
 wait_time = 1.4
 one_shot = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_415xn")
+volume_db = -0.03
+bus = &"SFX"
+
+[node name="PlayerHitSound" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_k35dy")
+bus = &"SFX"
 
 [connection signal="body_entered" from="PlayerDetection" to="." method="_on_player_detection_body_entered"]
 [connection signal="body_entered" from="HurtBox" to="." method="_on_hurt_box_body_entered"]

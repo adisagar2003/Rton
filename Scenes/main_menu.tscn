@@ -1,10 +1,11 @@
-[gd_scene load_steps=28 format=3 uid="uid://b16igjpocn3us"]
+[gd_scene load_steps=29 format=3 uid="uid://b16igjpocn3us"]
 
 [ext_resource type="Script" path="res://Scenes/main_menu.gd" id="1_tmyjn"]
 [ext_resource type="Texture2D" uid="uid://bj3odikpci6g6" path="res://Scenes/main-char.png" id="2_jgvbm"]
 [ext_resource type="Texture2D" uid="uid://b3rr0r3u2gqma" path="res://Scenes/enemy.png" id="3_gwt84"]
 [ext_resource type="Texture2D" uid="uid://c1wkodi3qgu2l" path="res://Assets/wasd.png" id="4_key1l"]
 [ext_resource type="Texture2D" uid="uid://bl3mji2df133p" path="res://Assets/UI/Keys/J-Key.png" id="4_ns56e"]
+[ext_resource type="PackedScene" uid="uid://dnb50t3oc5b8w" path="res://Scenes/bg_music.tscn" id="6_ecj7k"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_18fat"]
 bg_color = Color(0.220645, 0.000630164, 0.0795841, 1)
@@ -338,7 +339,7 @@ scale = Vector2(29.344, 29.344)
 sprite_frames = SubResource("SpriteFrames_mde6n")
 animation = &"Idle"
 autoplay = "Idle"
-frame_progress = 0.693922
+frame_progress = 0.683575
 metadata/_aseprite_wizard_interface_config_ = {
 "pending_changes": {}
 }
@@ -360,7 +361,7 @@ position = Vector2(601, 196)
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_nvbll")
 autoplay = "default"
-frame_progress = 0.655616
+frame_progress = 0.408208
 metadata/_aseprite_wizard_interface_config_ = {
 "pending_changes": {}
 }
@@ -430,6 +431,9 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_des35")
 text = "Quit"
+
+[node name="BgMusic" parent="." instance=ExtResource("6_ecj7k")]
+position = Vector2(-420, 283)
 
 [connection signal="pressed" from="VBoxContainer/Start" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/Quit" to="." method="_on_quit_pressed"]

@@ -6,11 +6,12 @@ var carcass2 = preload("res://Scenes/Carcass.tscn")
 @onready var player = get_tree().current_scene.get_node("Rton");
 @onready var cameraShake = get_tree().current_scene.get_node("CameraShake");
 # health
-@export var health = 20;
-
+@export var health = 10;
+@onready var hit_sound: AudioStreamPlayer2D = $AudioStreamPlayer2D
 @onready var navGrid = get_tree().current_scene.get_node("Navgrid");
 @export var reboundStrength = 500;
-# 
+@onready var player_hit_sound: AudioStreamPlayer2D = $PlayerHitSound
+
 enum State {IDLE ,PATROL, HURT, CHASE, ATTACK, WAIT}
 var state = State.IDLE;
 var randomNewLocationDirection = Vector2.ZERO
@@ -69,6 +70,7 @@ func _physics_process(delta: float) -> void:
 					player.getHurt(directionTowardsPlayer);
 					# all enemies should wait for a while 
 					startTheWaitTimer();
+					
 					state = State.WAIT;
 					pass
 				pass
@@ -104,6 +106,8 @@ func TakeDamage():
 
 func startTheWaitTimer():
 	# this would prevent from calling it recursively.
+	#play the hit sound
+	hit_sound.play();
 	if (state != State.WAIT):
 		$Wait_Timer.start();
 	pass
@@ -125,10 +129,12 @@ func _on_hurt_box_body_entered(body: Node2D) -> void:
 					# get the value of the vector
 					# apply impulsive velocity towards it 
 					# use a timer for calculating the duration of impulsive velocity
-					
+				
 				var directionOfPush = position.direction_to(player.position) * -1;
 				velocity = directionOfPush * reboundStrength;
 				health = health -10;
+				# ````SOUND ```` Make a sound as player hits
+				player_hit_sound.play()
 				# set a timer here.. need to fall back and start attacking.. not immediately
 				$Chase_Timer.start();
 				if (health < 0):

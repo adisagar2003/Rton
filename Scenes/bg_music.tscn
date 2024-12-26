@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://dnb50t3oc5b8w"]
+
+[ext_resource type="AudioStream" uid="uid://dlfn3bxlikddi" path="res://Scenes/rton_theme_music.mp3" id="1_8fady"]
+[ext_resource type="Script" path="res://Scenes/bg_music.gd" id="1_irthk"]
+
+[node name="BgMusic" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_8fady")
+bus = &"Music"
+script = ExtResource("1_irthk")
