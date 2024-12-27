@@ -7,3 +7,5 @@
 stream = ExtResource("1_8fady")
 bus = &"Music"
 script = ExtResource("1_irthk")
+
+[connection signal="finished" from="." to="." method="_on_finished"]
